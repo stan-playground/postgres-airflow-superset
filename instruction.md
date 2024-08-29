@@ -22,7 +22,7 @@ bash
 docker run -d \
 --name postgres_1 \
 -e POSTGRES_USER=postgres \
--e POSTGRES_PASSWORD='strongpassword' \
+-e POSTGRES_PASSWORD=123 \
 -e POSTGRES_DB=test_app \
 -v postgres_1_vol:/var/lib/postgresql/data \
 --network my_network \
@@ -49,7 +49,7 @@ docker exec -it superset superset fab create-admin \
 --firstname Superset \
 --lastname Admin \
 --email admin@superset.com \
---password strongpassword
+--password admin
 ```
 
 2.2 Upgrade Superset Database:
@@ -115,6 +115,8 @@ HasCrCard INTEGER,
 IsActiveMember INTEGER,
 EstimatedSalary FLOAT,
 Exited INTEGER);
+```
+```
 \copy customer_data FROM '/var/lib/postgresql/data/credit_clients.csv' DELIMITER ',' CSV HEADER;
 ```
 
@@ -127,8 +129,20 @@ docker network connect my_network superset
 ```
 
 ## Step 5: Set Up SSH Tunneling (Optional for Remote Access)
+❗️ in local terminal (in vscode etc)
 bash
 ```
 ssh -L 8080:localhost:8088 <user_name>@<ip_address>
 ```
-Access Superset at http://localhost:8080.
+### Access Superset at http://localhost:8080.
+
+in Superset click on +, use ip as follows:
+```
+docker inspect <имя_сети>
+```
+name - from step "Create a Docker Network"
+see IP in postgres part (below)
+
+port 5432 🚧
+
+login-pw - from step with "docker exec -it superset"
