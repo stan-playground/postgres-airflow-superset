@@ -44,6 +44,13 @@ docker run --rm -d \
 apache/superset
 ```
 
+1.6 Connecting Containers to Network
+The containers should already be on the same network (my_network) as specified during their creation. If not, you can manually connect them:
+ 
+```
+docker network connect my_network postgres_1
+docker network connect my_network superset
+
 ## Step 2: Initialize Superset
 2.1 Create an Admin User:
  
@@ -64,7 +71,6 @@ docker exec -it superset superset db upgrade
 ```
 
 2.3 Initialize Superset Services:
-
  
 ```
 docker exec -it superset superset init
@@ -84,10 +90,8 @@ docker inspect <имя_сети>
 ```
 name - from step "Create a Docker Network"
 see IP in postgres part (below)
-
-port 5432 🚧
-
-login-pw - from step with "docker exec -it superset"
+port 5432 
+login-pw - from step with "docker exec -it superset" (nornally, admin/admin)
 
 ## Step 4. Postgres
 
@@ -143,11 +147,6 @@ Exited INTEGER);
 \copy customer_data FROM '/var/lib/postgresql/data/credit_clients.csv' DELIMITER ',' CSV HEADER;
 ```
 
-## Step 5: Connecting Containers to Network
-The containers should already be on the same network (my_network) as specified during their creation. If not, you can manually connect them:
- 
-```
-docker network connect my_network postgres_1
-docker network connect my_network superset
+
 ```
 
