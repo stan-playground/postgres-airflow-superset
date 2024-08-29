@@ -50,6 +50,7 @@ The containers should already be on the same network (my_network) as specified d
 ```
 docker network connect my_network postgres_1
 docker network connect my_network superset
+```
 
 ## Step 2: Initialize Superset
 2.1 Create an Admin User:
