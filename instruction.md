@@ -28,7 +28,7 @@ docker run -d \
 -e POSTGRES_USER=postgres \
 -e POSTGRES_PASSWORD=123 \
 -e POSTGRES_DB=test_app \
--v postgres_1_vol:/var/lib/postgresql/data \
+-v postgres_1_vol:/var/lib/postgresql \
 --network my_network \
 postgres:15
 ```
@@ -114,7 +114,7 @@ Copy the CSV File to the Container:
 
  
 ```
-docker cp /path/to/your/local/credit_clients.csv postgres_1:/var/lib/postgresql/data/
+docker cp /path/to/your/local/credit_clients.csv postgres_1:/var/lib/postgresql/
 ```
 
 Access the PostgreSQL Container:
@@ -144,7 +144,7 @@ EstimatedSalary FLOAT,
 Exited INTEGER);
 ```
 ```
-\copy customer_data FROM '/var/lib/postgresql/data/credit_clients.csv' DELIMITER ',' CSV HEADER;
+\copy customer_data FROM '/var/lib/postgresql/credit_clients.csv' DELIMITER ',' CSV HEADER;
 ```
 
 
