@@ -1,3 +1,7 @@
+## Step 0: VM
+connect to VM in terminal 
+ssh <VM_user>:<VM_ip>
+
 ## Step 1: Docker
 
 1.1 Install Docker
@@ -5,19 +9,19 @@ If Docker is not installed on your system, install it by following the official 
 https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-22-04
 
 1.2: Create a Docker Network
-bash
+ 
 ```
 docker network create my_network
 ```
 
 1.3: Create a Volume for PostgreSQL Data
-bash
+ 
 ```
 docker volume create postgres_1_vol
 ``` 
 
 1.4: Run PostgreSQL Container
-bash
+ 
 ```
 docker run -d \
 --name postgres_1 \
@@ -30,7 +34,7 @@ postgres:15
 ```
 
 1.5: Run Superset Container
-bash
+ 
 ```
 docker run --rm -d \
 -p 8088:8088 \
@@ -42,7 +46,7 @@ apache/superset
 
 ## Step 2: Initialize Superset
 2.1 Create an Admin User:
-bash
+ 
 ```
 docker exec -it superset superset fab create-admin \
 --username admin \
@@ -54,21 +58,40 @@ docker exec -it superset superset fab create-admin \
 
 2.2 Upgrade Superset Database:
 
-bash
+ 
 ```
 docker exec -it superset superset db upgrade
 ```
 
 2.3 Initialize Superset Services:
 
-bash
+ 
 ```
 docker exec -it superset superset init
 ```
 
-## Step 3. Postgres
+## Step 3: Set Up SSH Tunneling (Optional for Remote Access)
+❗️ in local terminal (in vscode etc)
+ 
+```
+ssh -L 8080:localhost:8088 <user_name>@<ip_address>
+```
+### Access Superset at http://localhost:8080.
 
-3.1: Add PostgreSQL Database to Superset
+in Superset click on +, use ip as follows:
+```
+docker inspect <имя_сети>
+```
+name - from step "Create a Docker Network"
+see IP in postgres part (below)
+
+port 5432 🚧
+
+login-pw - from step with "docker exec -it superset"
+
+## Step 4. Postgres
+
+4.1: Add PostgreSQL Database to Superset
 
 Access Superset at http://localhost:8088 using your browser.
 Login with your Superset admin credentials.
@@ -82,22 +105,22 @@ Username: postgres
 Password: strongpassword
 Test the connection and save.
 
-3.2: Adding a CSV File to PostgreSQL
+4.2: Adding a CSV File to PostgreSQL
 Copy the CSV File to the Container:
 
-bash
+ 
 ```
 docker cp /path/to/your/local/credit_clients.csv postgres_1:/var/lib/postgresql/data/
 ```
 
 Access the PostgreSQL Container:
-bash
+ 
 ```
-docker exec -it postgres_1 bash
+docker exec -it postgres_1  
 ```
 
 Create the Table and Import Data:
-bash
+ 
 ```
 psql -U postgres -d test_app
 CREATE TABLE customer_data (
@@ -120,29 +143,11 @@ Exited INTEGER);
 \copy customer_data FROM '/var/lib/postgresql/data/credit_clients.csv' DELIMITER ',' CSV HEADER;
 ```
 
-## Step 4: Connecting Containers to Network
+## Step 5: Connecting Containers to Network
 The containers should already be on the same network (my_network) as specified during their creation. If not, you can manually connect them:
-bash
+ 
 ```
 docker network connect my_network postgres_1
 docker network connect my_network superset
 ```
 
-## Step 5: Set Up SSH Tunneling (Optional for Remote Access)
-❗️ in local terminal (in vscode etc)
-bash
-```
-ssh -L 8080:localhost:8088 <user_name>@<ip_address>
-```
-### Access Superset at http://localhost:8080.
-
-in Superset click on +, use ip as follows:
-```
-docker inspect <имя_сети>
-```
-name - from step "Create a Docker Network"
-see IP in postgres part (below)
-
-port 5432 🚧
-
-login-pw - from step with "docker exec -it superset"
